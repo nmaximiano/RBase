@@ -89,7 +89,7 @@ export default function ProjectsPage() {
       <Nav
         links={[
           { label: "Home", href: "/" },
-          { label: "GitHub", href: GITHUB_HREF, external: true, disabled: true },
+          { label: "GitHub", href: GITHUB_HREF, external: true },
         ]}
         rightSlot={<SettingsMenu />}
         homeHref="/projects"

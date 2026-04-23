@@ -36,7 +36,7 @@ export default function LandingPage() {
         links={[
           { label: "Capabilities", href: "#capabilities" },
           { label: "Comparison", href: "#comparison" },
-          { label: "GitHub", href: GITHUB_HREF, external: true, disabled: true },
+          { label: "GitHub", href: GITHUB_HREF, external: true },
         ]}
         rightSlot={<SettingsMenu />}
         cta={{ label: "Open RBase →", href: APP_HREF }}
@@ -131,8 +131,9 @@ function Hero() {
             </div>
           </div>
           <a
-            href="#"
-            onClick={(e) => e.preventDefault()}
+            href={GITHUB_HREF}
+            target="_blank"
+            rel="noopener noreferrer"
             style={{
               background: "transparent",
               color: INK,

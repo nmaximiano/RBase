@@ -48,7 +48,7 @@ export default function PrivacyPage() {
       <Nav
         links={[
           { label: "Home", href: "/" },
-          { label: "GitHub", href: GITHUB_HREF, external: true, disabled: true },
+          { label: "GitHub", href: GITHUB_HREF, external: true },
         ]}
         rightSlot={<SettingsMenu />}
       />
