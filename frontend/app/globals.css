@@ -1,0 +1,250 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+@custom-variant dark (&:where(.dark, .dark *));
+@import "katex/dist/katex.min.css" layer(base);
+
+/* Editorial design tokens.
+   One source of truth for the paper/ink palette used by every page that
+   follows the editorial style (landing, projects, terms, privacy).
+   Dark-mode values live under html.dark so toggling the theme updates
+   every component that reads these vars. No component-level branching,
+   no hardcoded hex across the tree. */
+:root {
+  /* Surfaces: three tiers. Outer paper-tint recedes, paper is the
+     primary reading/working surface, surface is the brightest (used
+     for active tabs, cards-to-foreground). Mock matches this pattern. */
+  --rbase-surface: #FFFFFF;
+  --rbase-paper: #FAFAF7;
+  --rbase-paper-tint: #F4F2ED;
+
+  /* Ink (foreground) */
+  --rbase-ink: #0E0E0C;
+  --rbase-ink-strong: rgba(14, 14, 12, 0.85);
+  --rbase-ink-soft: rgba(14, 14, 12, 0.7);
+
+  /* Semantic */
+  --rbase-muted: rgba(14, 14, 12, 0.6);
+  --rbase-faint: rgba(14, 14, 12, 0.4);
+  --rbase-border: rgba(14, 14, 12, 0.12);
+  --rbase-hairline: rgba(14, 14, 12, 0.08);
+  --rbase-code-bg: rgba(14, 14, 12, 0.06);
+  --rbase-row-hover: rgba(14, 14, 12, 0.03);
+
+  /* Accent */
+  --rbase-accent: oklch(0.45 0.12 255);
+  --rbase-accent-hover: oklch(0.38 0.12 255);
+  --rbase-accent-soft: oklch(0.96 0.02 255);
+
+  /* Destructive (kept minimal: clear data, delete buttons) */
+  --rbase-danger: rgb(180, 30, 30);
+}
+
+html.dark {
+  /* Surface tier ordering stays consistent with light mode:
+     surface > paper > paper-tint in perceptual lightness. That way the
+     "outer recedes, inner pops" relationship holds in both themes. */
+  --rbase-surface: #1C1C1A;
+  --rbase-paper: #141412;
+  --rbase-paper-tint: #0C0C0A;
+
+  --rbase-ink: #EAE8E3;
+  --rbase-ink-strong: rgba(234, 232, 227, 0.88);
+  --rbase-ink-soft: rgba(234, 232, 227, 0.72);
+
+  --rbase-muted: rgba(234, 232, 227, 0.58);
+  --rbase-faint: rgba(234, 232, 227, 0.4);
+  --rbase-border: rgba(234, 232, 227, 0.14);
+  --rbase-hairline: rgba(234, 232, 227, 0.08);
+  --rbase-code-bg: rgba(234, 232, 227, 0.08);
+  --rbase-row-hover: rgba(234, 232, 227, 0.04);
+
+  --rbase-accent: oklch(0.55 0.14 255);
+  --rbase-accent-hover: oklch(0.62 0.14 255);
+  --rbase-accent-soft: oklch(0.22 0.05 255);
+
+  --rbase-danger: rgb(240, 110, 110);
+}
+
+/* Prevent KaTeX from blowing out container width */
+.katex-display { overflow-x: auto; overflow-y: hidden; }
+.katex { overflow-wrap: break-word; position: relative; }
+
+/* Tailwind color tokens, aliased to the editorial palette so every
+   existing Tailwind class (bg-surface, text-text, border-border,
+   text-accent, etc.) resolves to the paper/ink colors. */
+@theme {
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
+  --color-surface: var(--rbase-paper);
+  --color-surface-alt: var(--rbase-paper-tint);
+  --color-surface-hover: var(--rbase-row-hover);
+  --color-surface-bright: var(--rbase-surface);
+  --color-border: var(--rbase-border);
+  --color-border-focus: var(--rbase-accent);
+  --color-text: var(--rbase-ink);
+  --color-text-secondary: var(--rbase-ink-strong);
+  --color-text-muted: var(--rbase-muted);
+  --color-accent: var(--rbase-accent);
+  --color-accent-hover: var(--rbase-accent-hover);
+  --color-error: var(--rbase-danger);
+  --color-error-bg: color-mix(in srgb, var(--rbase-danger) 8%, transparent);
+  --color-error-border: color-mix(in srgb, var(--rbase-danger) 30%, transparent);
+  --color-success: #10b981;
+  --color-success-bg: #ecfdf5;
+  --color-success-border: #a7f3d0;
+}
+
+/* Dark-mode overrides: only the success colors need separate dark values,
+   since everything else already resolves through the editorial --rbase-*
+   tokens which have their own html.dark block above. */
+html.dark {
+  --color-success: #34d399;
+  --color-success-bg: #101f15;
+  --color-success-border: #065f46;
+  color-scheme: dark;
+}
+
+html, body {
+  font-family: var(--font-inter-tight), system-ui, sans-serif;
+  margin: 0;
+  height: 100%;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+}
+
+/* All interactive elements get pointer cursor */
+button, [role="button"], a, label[for], select, summary,
+input[type="checkbox"], input[type="radio"], input[type="submit"],
+input[type="button"], input[type="reset"], input[type="file"] {
+  cursor: pointer;
+}
+
+/* Scrollbar styling */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) var(--color-surface);
+}
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--color-surface); }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+::-webkit-scrollbar-button { display: none; }
+
+/* Landing page scroll reveal */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-reveal].revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered children */
+[data-reveal-stagger] > * {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-reveal-stagger].revealed > *:nth-child(1) { transition-delay: 0ms; }
+[data-reveal-stagger].revealed > *:nth-child(2) { transition-delay: 80ms; }
+[data-reveal-stagger].revealed > *:nth-child(3) { transition-delay: 160ms; }
+[data-reveal-stagger].revealed > *:nth-child(4) { transition-delay: 240ms; }
+
+[data-reveal-stagger].revealed > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Chat typing indicator dots (referenced by inline style in ChatPanel) */
+@keyframes typing-dot {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-4px); }
+}
+
+/* Responsive overrides for the shared UI chrome + landing page.
+   Class prefixes:
+     .rbase-ui-*      : shared Nav / Footer (used by landing, dashboard, …)
+     .rbase-landing-* : landing-only sections (hero, strip, feature grid, …)
+   Scoped so they never leak into any other page's styles. */
+@media (max-width: 900px) {
+  .rbase-ui-nav { padding: 16px 20px !important; }
+  .rbase-ui-navlinks { display: none !important; }
+  .rbase-ui-footer { padding: 20px !important; }
+
+  .rbase-landing-hero { padding: 48px 20px 24px !important; }
+  .rbase-landing-h1 { font-size: clamp(44px, 10vw, 72px) !important; }
+  .rbase-landing-herogrid {
+    grid-template-columns: 1fr !important;
+    gap: 28px !important;
+    margin-top: 28px !important;
+  }
+  .rbase-landing-shot { padding: 0 20px 48px !important; }
+  .rbase-landing-strip {
+    padding: 20px !important;
+    gap: 18px !important;
+    font-size: 16px !important;
+  }
+  .rbase-landing-section { padding: 48px 20px !important; }
+  .rbase-landing-sectionhead {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    margin-bottom: 32px !important;
+  }
+  .rbase-landing-h2 { font-size: clamp(28px, 6vw, 40px) !important; }
+  .rbase-landing-featuregrid {
+    grid-template-columns: 1fr !important;
+    gap: 1px !important;
+  }
+  .rbase-landing-cta-h { font-size: clamp(32px, 8vw, 52px) !important; }
+
+  .rbase-projects-main { padding: 40px 20px !important; }
+  .rbase-projects-h1 { font-size: clamp(40px, 10vw, 60px) !important; }
+
+  .rbase-doc-main { padding: 48px 20px 64px !important; }
+  .rbase-doc-h1 { font-size: clamp(44px, 10vw, 60px) !important; }
+}
+
+/* Dashboard row hover + delete reveal */
+.rbase-projects-delete { opacity: 0; transition: opacity 120ms ease, color 120ms ease; }
+.rbase-projects-row:hover .rbase-projects-delete { opacity: 1; }
+.rbase-projects-delete:hover { color: var(--rbase-danger) !important; }
+.rbase-projects-rowlink:hover { background: var(--rbase-row-hover); }
+
+/* Shared panel eyebrow: labels above Environment / Plots / Console /
+   Agent / Config. Regular sans (Inter Tight) rather than mono for a
+   less "developer-tool" feel. Uppercase + slight tracking keeps the
+   pattern recognizable. */
+.rbase-eyebrow {
+  font-family: var(--font-inter-tight), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--rbase-muted);
+}
+
+/* Shared thin drag handle, horizontal (for console/plot splits) */
+.rbase-drag-h {
+  flex-shrink: 0;
+  height: 1px;
+  cursor: row-resize;
+  background: var(--rbase-hairline);
+  transition: background 120ms ease;
+}
+.rbase-drag-h:hover { background: color-mix(in srgb, var(--rbase-accent) 40%, transparent); }
+.rbase-drag-v {
+  flex-shrink: 0;
+  width: 1px;
+  cursor: col-resize;
+  background: var(--rbase-hairline);
+  transition: background 120ms ease;
+}
+.rbase-drag-v:hover { background: color-mix(in srgb, var(--rbase-accent) 40%, transparent); }
